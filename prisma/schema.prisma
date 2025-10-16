@@ -1,9 +1,91 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/prisma"
+    provider = "prisma-client-js"
+    output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
 }
+
+model Role {
+    id_role     String @id() @default(uuid())
+    role        String @unique @db.VarChar(50)
+    permissioni String @db.VarChar(100)
+    User        User[]
+}
+
+model User {
+    id_user         String    @id() @default(uuid())
+    code_cec_user   String    @db.VarChar(50)
+    name_user       String    @db.VarChar(50)
+    first_name_user String    @db.VarChar(50)
+    mail_user       String    @unique @db.VarChar(80)
+    cin_user        String    @unique @db.VarChar(12)
+    phone_user      String    @db.VarChar(15)
+    password_user   String
+    id_fkt          String
+    Fokontany       Fokontany @relation(fields: [id_fkt], references: [id_fkt])
+    id_role         String
+    Role            Role      @relation(fields: [id_role], references: [id_role])
+    Attribution Attribution[]
+}
+
+model District {
+    id_dist  String    @id() @default(uuid())
+    nom_dist String    @db.VarChar(50)
+    Commune  Commune[]
+}
+
+model Commune {
+    id_comm   String      @id() @default(uuid())
+    nom_comm  String      @db.VarChar(50)
+    id_dist   String
+    District  District    @relation(fields: [id_dist], references: [id_dist])
+    Fokontany Fokontany[]
+}
+
+model Fokontany {
+    id_fkt  String    @id() @default(uuid())
+    nom_fkt String    @db.VarChar(50)
+    id_dist String
+    Commune Commune   @relation(fields: [id_dist], references: [id_comm])
+    Citoyen Citoyen[]
+    User    User[]
+}
+
+model Citoyen {
+    id_cit         String        @id() @default(uuid())
+    name_cit       String        @db.VarChar(50)
+    first_name_cit String?       @db.VarChar(50)
+    date_birth_cit DateTime
+    cin_cit        String        @db.VarChar(12)
+    nom_mere_cit   String        @db.VarChar(80)
+    id_fkt         String
+    Fokontany      Fokontany     @relation(fields: [id_fkt], references: [id_fkt])
+    Attrib         Attribution[]
+}
+
+model Attribution {
+    id_attrib    String    @id() @default(uuid())
+    date_attrib  DateTime
+    date_remise  DateTime?
+    nui_cit      Int       @db.Integer
+    num_acte_cit String    @db.VarChar(50)
+    id_cit       String
+    Citoyen      Citoyen   @relation(references: [id_cit], fields: [id_cit])
+    id_user       String
+    User      User   @relation(references: [id_user], fields: [id_user])
+
+    @@unique([id_cit])
+}
+
+/**
+ * ROLES: id_role, role, permission
+ * USERS: id_user, code_cec_user, name_user, first_name_user, mail_user, cin_user, phone_user, password_user, #id_role, #id_fkt
+ * ATTRIBUTIONS: id_attrib, date_attrib, date_remise, nui_cit, num_acte_cit, #id_user, #id_cit
+ * CITOYENS: id_cit, name_cit, first_name_cit, date_birth_cit, cin_cit, nom_mere_cit , #id_user, #id_fkt
+ * FOKONTANY: id_fkt, nom_fkt, #id_comm
+ * COMMNUES: id_comm, nom_comm, #id_dist
+ * DISTRICTS: id_dist, nom_dist, #id_reg
+ */
