@@ -16,19 +16,19 @@ model Role {
 }
 
 model User {
-    id_user         String    @id() @default(uuid())
-    code_cec_user   String    @db.VarChar(50)
-    name_user       String    @db.VarChar(50)
-    first_name_user String    @db.VarChar(50)
-    mail_user       String    @unique @db.VarChar(80)
-    cin_user        String    @unique @db.VarChar(12)
-    phone_user      String    @db.VarChar(15)
+    id_user         String        @id() @default(uuid())
+    code_cec_user   String        @db.VarChar(50)
+    name_user       String        @db.VarChar(50)
+    first_name_user String        @db.VarChar(50)
+    mail_user       String        @unique @db.VarChar(80)
+    cin_user        String        @unique @db.VarChar(12)
+    phone_user      String        @db.VarChar(15)
     password_user   String
     id_fkt          String
-    Fokontany       Fokontany @relation(fields: [id_fkt], references: [id_fkt])
+    Fokontany       Fokontany     @relation(fields: [id_fkt], references: [id_fkt])
     id_role         String
-    Role            Role      @relation(fields: [id_role], references: [id_role])
-    Attribution Attribution[]
+    Role            Role          @relation(fields: [id_role], references: [id_role])
+    Attribution     Attribution[]
 }
 
 model District {
@@ -55,15 +55,16 @@ model Fokontany {
 }
 
 model Citoyen {
-    id_cit         String        @id() @default(uuid())
-    name_cit       String        @db.VarChar(50)
-    first_name_cit String?       @db.VarChar(50)
-    date_birth_cit DateTime
-    cin_cit        String        @db.VarChar(12)
-    nom_mere_cit   String        @db.VarChar(80)
-    id_fkt         String
-    Fokontany      Fokontany     @relation(fields: [id_fkt], references: [id_fkt])
-    Attrib         Attribution[]
+    id_cit            String        @id() @default(uuid())
+    name_cit          String        @db.VarChar(50)
+    first_name_cit    String?       @db.VarChar(50)
+    date_birth_cit    DateTime
+    birth_cert_id_cit String        @db.VarChar(12)
+    cin_cit           String        @db.VarChar(12)
+    nom_mere_cit      String        @db.VarChar(80)
+    id_fkt            String
+    Fokontany         Fokontany     @relation(fields: [id_fkt], references: [id_fkt])
+    Attrib            Attribution[]
 }
 
 model Attribution {
@@ -74,8 +75,8 @@ model Attribution {
     num_acte_cit String    @db.VarChar(50)
     id_cit       String
     Citoyen      Citoyen   @relation(references: [id_cit], fields: [id_cit])
-    id_user       String
-    User      User   @relation(references: [id_user], fields: [id_user])
+    id_user      String
+    User         User      @relation(references: [id_user], fields: [id_user])
 
     @@unique([id_cit])
 }
